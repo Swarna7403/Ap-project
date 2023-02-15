@@ -9,7 +9,7 @@ class home extends StatelessWidget {
       home: Scaffold(
         body: Center(
           child: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
                   bottomLeft: Radius.elliptical(200, 300),

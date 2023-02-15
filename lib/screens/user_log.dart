@@ -1,10 +1,18 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:my_app/screens/urs.dart';
 import 'package:my_app/screens/user_reg.dart';
 
 class User_log extends StatelessWidget {
+  TextEditingController email = TextEditingController();
+  TextEditingController password = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -68,97 +76,107 @@ class User_log extends StatelessWidget {
                 SizedBox(
                     height: 300,
                     width: 300,
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 10),
-                            child: Text(
-                              'Email ID',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 20),
-                            child: TextField(
-                              decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        width: 2,
-                                        color: Colors.lightBlue.shade900),
-                                    borderRadius: BorderRadius.circular(10)),
-                                suffixIcon: Icon(
-                                  Icons.email_outlined,
-                                  color: Colors.black,
-                                ),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 10),
+                              child: Text(
+                                'Email ID',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700),
                               ),
                             ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 10),
-                            child: Text(
-                              'Password',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 15),
-                            child: TextField(
-                              decoration: InputDecoration(
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 20),
+                              child: TextFormField(
+                                controller: email,
+                                decoration: InputDecoration(
                                   enabledBorder: OutlineInputBorder(
                                       borderSide: BorderSide(
                                           width: 2,
                                           color: Colors.lightBlue.shade900),
                                       borderRadius: BorderRadius.circular(10)),
-                                  suffixIcon:
-                                      Image.asset('asserts/Vector.png')),
-                            ),
-                          ),
-                          Row(children: <Widget>[
-                            SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: Image.asset('asserts/check-square.png'),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 5, right: 44),
-                              child: Text(
-                                'Remember Me',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
+                                  suffixIcon: Icon(
+                                    Icons.email_outlined,
+                                    color: Colors.black,
+                                  ),
                                 ),
                               ),
                             ),
-                            SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: Image.asset('asserts/help-circle.png'),
-                            ),
                             Padding(
-                              padding: EdgeInsets.only(left: 5, right: 0),
+                              padding: EdgeInsets.only(bottom: 10),
                               child: Text(
-                                'Forgot Password?',
+                                'Password',
                                 style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700),
                               ),
                             ),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 15),
+                              child: TextFormField(
+                                controller: password,
+                                decoration: InputDecoration(
+                                    enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            width: 2,
+                                            color: Colors.lightBlue.shade900),
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    suffixIcon:
+                                        Image.asset('asserts/Vector.png')),
+                              ),
+                            ),
+                            Row(children: <Widget>[
+                              SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: Image.asset('asserts/check-square.png'),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 5, right: 44),
+                                child: Text(
+                                  'Remember Me',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: Image.asset('asserts/help-circle.png'),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 5, right: 0),
+                                child: Text(
+                                  'Forgot Password?',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ]),
                           ]),
-                        ])),
+                    )),
                 Padding(
                   padding: EdgeInsets.only(bottom: 50),
                   child: FloatingActionButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        singinUser(context, email, password, height, width);
+                      }
+                    },
                     backgroundColor: Colors.blueGrey.shade200,
                     elevation: 0,
                     child: Container(
@@ -195,11 +213,11 @@ class User_log extends StatelessWidget {
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
                                   Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => User_reg(),
-                                      ),
-                                      );
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => User_reg(),
+                                    ),
+                                  );
                                 }),
                         ]),
                   ),
@@ -211,5 +229,220 @@ class User_log extends StatelessWidget {
         backgroundColor: Colors.lightBlue.shade900,
       ),
     );
+  }
+
+  void singinUser(context, email, password, height, width) {
+    FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email.text, password: password.text)
+        .then((value) async {
+      Navigator.pop(context);
+      Navigator.pushAndRemoveUntil(context,
+          MaterialPageRoute(builder: (context) => Urs()), (route) => false);
+    }).catchError((e) {
+      print(e);
+      print(e.hashCode);
+      print(e.runtimeType);
+      if (e is FirebaseAuthException) {
+        if (e.code == 'wrong-password') {
+          Navigator.pop(context);
+          showDialog(
+              context: context,
+              builder: (contex) {
+                return Center(
+                    child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: SizedBox(
+                    height: height * 0.3,
+                    width: width * 0.85,
+                    child: Material(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'Wrong Password\n Retry...!',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: width * 0.04,
+                                fontFamily: "Urbanist",
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            width: width * 0.7,
+                            height: 56,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: Color(0xff1e232c),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: MaterialButton(
+                                  onPressed: (() {
+                                    Navigator.pop(context);
+                                  }),
+                                  child: Center(
+                                    child: Text(
+                                      "Ok",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: width * 0.04,
+                                        fontFamily: "Urbanist",
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ));
+              });
+        } else if (e.code == 'user-not-found') {
+          Navigator.pop(context);
+          showDialog(
+              context: context,
+              builder: (contex) {
+                return Center(
+                    child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: SizedBox(
+                    width: width * 0.85,
+                    height: height * 0.3,
+                    child: Material(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "User Doesn't exists\n Please create an account",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: width * 0.04,
+                                fontFamily: "Urbanist",
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            width: width * 0.7,
+                            height: 56,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: Color(0xff1e232c),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: MaterialButton(
+                                  onPressed: (() {
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => User_reg()));
+                                  }),
+                                  child: Center(
+                                    child: Text(
+                                      "Register",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: width * 0.04,
+                                        fontFamily: "Urbanist",
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ));
+              });
+        } else if (e.code == 'invalid-email') {
+          Navigator.pop(context);
+          showDialog(
+              context: context,
+              builder: (contex) {
+                return Center(
+                    child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: SizedBox(
+                    height: height * 0.3,
+                    width: width * 0.85,
+                    child: Material(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "Check your mail correctly",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: width * 0.04,
+                                fontFamily: "Urbanist",
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            // width: width * 0.,
+                            height: 56,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: Color(0xff1e232c),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: MaterialButton(
+                                  onPressed: (() {
+                                    Navigator.pop(context);
+                                  }),
+                                  child: Center(
+                                    child: Text(
+                                      "OK",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: width * 0.04,
+                                        fontFamily: "Urbanist",
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ));
+              });
+        }
+      }
+    });
   }
 }

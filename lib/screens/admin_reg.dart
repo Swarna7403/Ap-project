@@ -1,11 +1,20 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:my_app/screens/admin_log.dart';
 import 'package:my_app/screens/ars.dart';
 
 class Admin_reg extends StatelessWidget {
+  TextEditingController email = TextEditingController();
+  TextEditingController password = TextEditingController();
+  TextEditingController confirmPassword = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -82,92 +91,97 @@ class Admin_reg extends StatelessWidget {
                 SizedBox(
                     height: 330,
                     width: 300,
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 10),
-                            child: Text(
-                              'Email ID',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 10),
+                              child: Text(
+                                'Email ID',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700),
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 20),
-                            child: TextField(
-                              decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        width: 2,
-                                        color: Colors.lightBlue.shade900),
-                                    borderRadius: BorderRadius.circular(10)),
-                                suffixIcon: Icon(
-                                  Icons.email_outlined,
-                                  color: Colors.black,
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 20),
+                              child: TextFormField(
+                                controller: email,
+                                decoration: InputDecoration(
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          width: 2,
+                                          color: Colors.lightBlue.shade900),
+                                      borderRadius: BorderRadius.circular(10)),
+                                  suffixIcon: Icon(
+                                    Icons.email_outlined,
+                                    color: Colors.black,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 10),
-                            child: Text(
-                              'Password',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 10),
+                              child: Text(
+                                'Password',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700),
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 20),
-                            child: TextField(
-                              decoration: InputDecoration(
-                                  enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          width: 2,
-                                          color: Colors.lightBlue.shade900),
-                                      borderRadius: BorderRadius.circular(10)),
-                                  suffixIcon:
-                                      Image.asset('asserts/Vector.png')),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 20),
+                              child: TextFormField(
+                                controller: password,
+                                decoration: InputDecoration(
+                                    enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            width: 2,
+                                            color: Colors.lightBlue.shade900),
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    suffixIcon:
+                                        Image.asset('asserts/Vector.png')),
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 10),
-                            child: Text(
-                              'Re-enter Password',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 10),
+                              child: Text(
+                                'Re-enter Password',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700),
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 0),
-                            child: TextField(
-                              decoration: InputDecoration(
-                                  enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          width: 2,
-                                          color: Colors.lightBlue.shade900),
-                                      borderRadius: BorderRadius.circular(10)),
-                                  suffixIcon:
-                                      Image.asset('asserts/Vector.png')),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 0),
+                              child: TextFormField(
+                                controller: confirmPassword,
+                                decoration: InputDecoration(
+                                    enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            width: 2,
+                                            color: Colors.lightBlue.shade900),
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    suffixIcon:
+                                        Image.asset('asserts/Vector.png')),
+                              ),
                             ),
-                          ),
-                        ])),
+                          ]),
+                    )),
                 Padding(
                   padding: EdgeInsets.only(bottom: 50),
                   child: FloatingActionButton(
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Ars(),
-                          ),
-                          );
+                      if (_formKey.currentState!.validate()) {
+                        register(context, email, password, height, width);
+                      }
                     },
                     backgroundColor: Colors.blueGrey.shade200,
                     elevation: 0,
@@ -205,11 +219,11 @@ class Admin_reg extends StatelessWidget {
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
                                   Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => Admin_log(),
-                                      ),
-                                      );
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Admin_log(),
+                                    ),
+                                  );
                                 }),
                         ]),
                   ),
@@ -221,5 +235,107 @@ class Admin_reg extends StatelessWidget {
         backgroundColor: Colors.lightBlue.shade900,
       ),
     );
+  }
+
+  void register(context, email, password, height, width) {
+    FirebaseAuth.instance
+        .createUserWithEmailAndPassword(
+            email: email.text, password: password.text)
+        .then((value) => FirebaseFirestore.instance
+                .collection("users")
+                .doc(FirebaseAuth.instance.currentUser!.uid)
+                .set({
+              "profileImage":
+                  "https://t3.ftcdn.net/jpg/03/46/83/96/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg",
+              // "name": username.text,
+              "email": email.text,
+              "name": "ADMIN",
+              'admin': true,
+            }))
+        .then((value) async {
+      Navigator.pushAndRemoveUntil(context,
+          MaterialPageRoute(builder: (context) => Ars()), (route) => false);
+      // Navigator.pop(context);
+    }).catchError((onError) {
+      print(onError.code);
+      if (onError is FirebaseAuthException) {
+        if (onError.code == 'email-already-in-use') {
+          Navigator.pop(context);
+          showDialog(
+              context: context,
+              builder: (contex) {
+                return Stack(
+                  children: [
+                    Center(
+                        child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Material(
+                        child: Container(
+                          height: height * 0.3,
+                          width: width * 0.8,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  'This email already exists..\n Please login',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: width * 0.04,
+                                    fontFamily: "Urbanist",
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                width: width * 0.2,
+                                height: 56,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  color: Color(0xff1e232c),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: MaterialButton(
+                                      onPressed: (() {
+                                        Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    Admin_log()),
+                                            (route) => false);
+                                      }),
+                                      child: Center(
+                                        child: Text(
+                                          "Login",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: width * 0.04,
+                                            fontFamily: "Urbanist",
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )),
+                  ],
+                );
+              });
+        }
+      }
+    });
   }
 }
